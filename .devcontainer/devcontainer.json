@@ -1,0 +1,31 @@
+{
+    "name": "gRPC Development",
+    "image": "ubuntu:latest",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "installOhMyZsh": true,
+            "configureZshAsDefaultShell": true
+        }
+    },
+    "postCreateCommand": [
+        "apt-get update",
+        "apt-get install -y build-essential curl unzip git jq",
+        "LATEST_RELEASE=$(curl -s https://api.github.com/repos/protocolbuffers/protobuf/releases/latest | jq -r '.tag_name')",
+        "VERSION_NUMBER=$(echo \"${LATEST_RELEASE}\" | sed 's/^v//')", // Remove the 'v'
+        "PROTOC_ZIP=protoc-${VERSION_NUMBER}-linux-x86_64.zip",
+        "curl -L -o ${PROTOC_ZIP} https://github.com/protocolbuffers/protobuf/releases/download/${LATEST_RELEASE}/${PROTOC_ZIP}",
+        "unzip ${PROTOC_ZIP} -d protoc",
+        "sudo mv protoc/bin/* /usr/local/bin/",
+        "sudo mv protoc/include/* /usr/local/include/",
+        "rm ${PROTOC_ZIP}",
+        "protoc --version"
+    ],
+        "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode-remote.remote-containers"
+            ]
+        }
+    }
+}
